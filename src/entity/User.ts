@@ -13,4 +13,7 @@ export class User extends BaseEntity {
 
   @Column("boolean", { default: false })
   confirmed: boolean;
+
+  @Column("varchar", { length: 50 })
+  name: string;
 }

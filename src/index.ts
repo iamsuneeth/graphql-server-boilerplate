@@ -1,12 +1,11 @@
 import "reflect-metadata";
-
 import server from "./server";
 import createtypeORMConnection from "./utils/typeORMConnection";
 import { formatError } from "./utils/errorFormatter";
 
 const startServer = async () => {
   await createtypeORMConnection();
-  server.start(
+  await server.start(
     {
       formatError
     },

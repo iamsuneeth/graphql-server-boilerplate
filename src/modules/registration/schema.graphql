@@ -1,7 +1,7 @@
 type Mutation {
-  register(email: String!, password: String!): Boolean
+  register(email: String!, password: String!, name: String!): Boolean
 }
 
 type Query {
-  hello: String!
+  isRegistered: Boolean!
 }

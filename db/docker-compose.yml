@@ -1,7 +1,6 @@
-version: '3.1'
+version: "3.1"
 
 services:
-
   db:
     image: postgres
     container_name: "postgres"
@@ -11,8 +10,9 @@ services:
     environment:
       POSTGRES_PASSWORD: postgres
 
-  adminer:
-    image: adminer
-    restart: always
+  redis:
+    image: redis
     ports:
-      - 8080:8080
+      - 6379:6379
+    restart: always
+    command: ["redis-server"]

@@ -5,6 +5,7 @@ import * as yup from "yup";
 import ValidationError from "../../errors/validationError";
 import * as bcrypt from "bcryptjs";
 import createUserEmailLink from "../../utils/createUserEmailLink";
+import sendMail from "../../utils/sendgrid";
 
 const validations = yup.object().shape({
   email: yup
@@ -31,7 +32,7 @@ const resolvers: ResolverMap = {
           }))
         );
       }
-      const { email, password } = args;
+      const { email, password, name } = args;
       const userExists = await User.findOne({
         where: {
           email
@@ -45,15 +46,19 @@ const resolvers: ResolverMap = {
       }
       const user = User.create({
         email,
-        password: await bcrypt.hash(password, 10)
+        password: await bcrypt.hash(password, 10),
+        name
       });
       await user.save();
-      const link = await createUserEmailLink(url, user.id, redis);
+      sendMail(email, {
+        confirmation_link: await createUserEmailLink(url, user.id, redis),
+        name
+      });
       return true;
     }
   },
   Query: {
-    hello: () => "hello"
+    isRegistered: () => true
   }
 };
 
