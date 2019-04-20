@@ -13,17 +13,18 @@ const request = supertest(app);
 describe("Register user", () => {
   const email = "test@test.com";
   const password = "password";
+  const name = "test";
   const invalidEmail = "dsfdsfsd";
 
   let connection: Connection;
   const registerMutation = `
   mutation {
-    register(email:"${email}",password:"${password}")
+    register(email:"${email}",password:"${password}",name:"${name}")
   }
   `;
   const registerMutation2 = `
   mutation {
-    register(email:"${invalidEmail}",password:"${password}")
+    register(email:"${invalidEmail}",password:"${password}",name:"${name}")
   }
   `;
 

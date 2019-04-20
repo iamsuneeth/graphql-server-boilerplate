@@ -1,25 +1,17 @@
 import { GraphQLServer } from "graphql-yoga";
 import fetchScehma from "./utils/schema";
-import * as Redis from "ioredis";
-import { User } from "./entity/User";
-
-const redis = new Redis();
+import redis from "./redis";
+import mailRouter from "./routes/mail";
+import "dotenv/config";
 
 const server = new GraphQLServer({
   schema: fetchScehma(),
   context: ({ request }) => ({
-    url: `${request.protocol}://${request.host}`,
+    url: `${request.protocol}://${request.hostname}`,
     redis
   })
 });
 
-server.express.get("/confirm/:id", async (request, response) => {
-  const id = request.params.id;
-  const userId = await redis.get(id);
-  if (userId) {
-    await User.update({ id: userId }, { confirmed: true });
-  }
-  response.send("ok");
-});
+server.express.use(mailRouter);
 
 export default server;

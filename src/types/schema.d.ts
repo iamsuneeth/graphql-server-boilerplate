@@ -23,6 +23,7 @@ column: number;
 interface IQuery {
 __typename: "Query";
 hello: string;
+isRegistered: boolean;
 }
 
 interface IHelloOnQueryArguments {
@@ -37,6 +38,7 @@ register: boolean | null;
 interface IRegisterOnMutationArguments {
 email: string;
 password: string;
+name: string;
 }
 }
 
