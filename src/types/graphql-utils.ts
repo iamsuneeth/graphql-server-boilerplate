@@ -2,6 +2,10 @@ import { GraphQLFormattedError } from "graphql";
 import { PrismaErrorProps } from "graphql-yoga/dist/defaultErrorFormatter";
 import { Redis } from "ioredis";
 
+export interface userSession extends Express.Session {
+  userId: string;
+}
+
 export interface ResolverMap {
   [key: string]: {
     [key: string]: (
@@ -10,7 +14,8 @@ export interface ResolverMap {
       context: {
         redis: Redis;
         url: string;
-        session: Express.Session;
+        session: userSession;
+        request: Express.Request;
       },
       info: any
     ) => any;

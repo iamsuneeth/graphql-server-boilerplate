@@ -1,19 +1,23 @@
-import * as supertest from "supertest";
 import { Connection } from "typeorm";
-import server from "../../server";
 import createtypeORMConnection from "../../utils/typeORMConnection";
 import { User } from "../../entity/User";
 import constants from "../../constants";
-import { formatError } from "../../utils/errorFormatter";
 import { GenericError } from "../../errors/genericError";
+import { TestClient } from "../../utils/TestClient";
 
-const app = server.createHttpServer({ formatError });
-const request = supertest(app);
+let client1: TestClient;
 
 let connection: Connection;
 
+const user = {
+  email: "example@example.com",
+  name: "name",
+  password: "pasword"
+};
 beforeAll(async () => {
   connection = await createtypeORMConnection();
+  client1 = new TestClient();
+  await User.create(user).save();
 });
 
 afterAll(async () => {
@@ -28,44 +32,24 @@ describe("Register user", () => {
   const name = "test";
   const invalidEmail = "dsfdsfsd";
 
-  const registerMutation = `
-  mutation {
-    register(email:"${email}",password:"${password}",name:"${name}")
-  }
-  `;
-  const registerMutation2 = `
-  mutation {
-    register(email:"${invalidEmail}",password:"${password}",name:"${name}")
-  }
-  `;
-
   test("Successful registration", async () => {
-    const response = await request
-      .post("/")
-      .send({
-        query: registerMutation
-      })
-      .expect(200);
-    expect(JSON.parse(response.text).data.register).toBeTruthy();
+    const { body: response } = await client1.register(email, password, name);
+    expect(response.data.register).toBeTruthy();
     const user = await User.findOne({
-      email: "test@test.com"
+      email
     });
-    expect(user).toMatchObject({
-      email: "test@test.com"
-    });
+    expect(user).toBeDefined();
   });
 
   test("Duplicate email id failure", async () => {
-    const response = await request
-      .post("/")
-      .send({
-        query: registerMutation
-      })
-      .expect(200);
-    const parsedResponse = JSON.parse(response.text);
-    expect(parsedResponse.data).toBeNull();
-    expect(parsedResponse.errors).toHaveLength(1);
-    expect(parsedResponse.errors[0]).toMatchObject({
+    const { body: response } = await client1.register(
+      user.email,
+      user.password,
+      user.name
+    );
+    expect(response.data).toBeNull();
+    expect(response.errors).toHaveLength(1);
+    expect(response.errors[0]).toMatchObject({
       type: GenericError.VALIDATION_ERROR,
       state: {
         email: [
@@ -79,16 +63,14 @@ describe("Register user", () => {
   });
 
   test("Invalid email id failure", async () => {
-    const response = await request
-      .post("/")
-      .send({
-        query: registerMutation2
-      })
-      .expect(200);
-    const parsedResponse = JSON.parse(response.text);
-    expect(parsedResponse.data).toBeNull();
-    expect(parsedResponse.errors).toHaveLength(1);
-    expect(parsedResponse.errors[0]).toMatchObject({
+    const { body: response } = await client1.register(
+      invalidEmail,
+      user.password,
+      user.name
+    );
+    expect(response.data).toBeNull();
+    expect(response.errors).toHaveLength(1);
+    expect(response.errors[0]).toMatchObject({
       type: GenericError.VALIDATION_ERROR,
       state: {
         email: [

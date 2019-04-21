@@ -1,46 +1,13 @@
-import server from "../../server";
-import { formatError } from "../../utils/errorFormatter";
-import supertest = require("supertest");
 import createtypeORMConnection from "../../utils/typeORMConnection";
 import { User } from "../../entity/User";
 import { Connection } from "typeorm";
 import { GenericError } from "../../errors/genericError";
 import constants from "../../constants";
+import { TestClient } from "../../utils/TestClient";
 
-const app = server.createHttpServer({ formatError });
-const request = supertest(app);
-const agent = supertest.agent(app);
-
+let client1: TestClient;
+let client2: TestClient;
 let connection: Connection;
-const loginMutationGenerator = (email: string, password: string) => {
-  return {
-    query: `
-    mutation{
-      login(email:"${email}",password:"${password}")
-    }
-  `
-  };
-};
-
-const meQuery = {
-  query: `
-  {
-    me{
-      id
-      email
-      name
-    }
-  }
-  `
-};
-
-const logoutMutation = {
-  query: `
-  mutation{
-    logout
-  }
-  `
-};
 
 const user = {
   email: "testuser@test.com",
@@ -59,6 +26,8 @@ beforeAll(async () => {
   connection = await createtypeORMConnection();
   await User.create(user).save();
   await User.create(confirmedUser).save();
+  client1 = new TestClient();
+  client2 = new TestClient();
 });
 
 afterAll(async () => {
@@ -67,33 +36,12 @@ afterAll(async () => {
   }
 });
 
-const loginQuery = async (request: any, email: string, password: string) => {
-  const response = await request
-    .post("/")
-    .send(loginMutationGenerator(email, password))
-    .expect(200);
-  return JSON.parse(response.text);
-};
-
-const meQueryRequest = async (request: any) => {
-  const response = await request
-    .post("/")
-    .send(meQuery)
-    .expect(200);
-  return JSON.parse(response.text);
-};
-
-const logoutMutationRequest = async (request: any) => {
-  const response = await request
-    .post("/")
-    .send(logoutMutation)
-    .expect(200);
-  return JSON.parse(response.text);
-};
-
 describe("login tests", () => {
   test("Invalid login due to wrong email id", async () => {
-    const response = await loginQuery(request, "test2@dfd.com", user.password);
+    const { body: response } = await client1.login(
+      "test2@dfd.com",
+      user.password
+    );
     expect(response.data).toBeNull();
     expect(response.errors).toHaveLength(1);
     expect(response.errors[0]).toMatchObject({
@@ -110,7 +58,7 @@ describe("login tests", () => {
   });
 
   test("Invalid login due to email verification pending", async () => {
-    const response = await loginQuery(request, user.email, user.password);
+    const { body: response } = await client1.login(user.email, user.password);
     expect(response.data).toBeNull();
     expect(response.errors).toHaveLength(1);
     expect(response.errors[0]).toMatchObject({
@@ -127,22 +75,20 @@ describe("login tests", () => {
   });
 
   test("Success login for verified user", async () => {
-    let response = await loginQuery(
-      agent,
+    let { body: response } = await client1.login(
       confirmedUser.email,
       confirmedUser.password
     );
     expect(response.data).not.toBeNull();
     expect(response.data.login).toBeTruthy();
 
-    response = await meQueryRequest(agent);
-    expect(response.data).not.toBeNull();
-    expect(response.data.me.email).toBe(confirmedUser.email);
-    await logoutMutationRequest(agent);
+    response = await client1.me();
+    expect(response.body.data).not.toBeNull();
+    expect(response.body.data.me.email).toBe(confirmedUser.email);
   });
 
   test("anonymous user response for non logged in user", async () => {
-    const response = await meQueryRequest(request);
+    const { body: response } = await client2.me();
     expect(response.data).not.toBeNull();
     expect(response.data.me.name).toBe("anonymous");
   });
@@ -150,22 +96,38 @@ describe("login tests", () => {
 
 describe("logout tests", () => {
   test("logout logged in user", async () => {
-    let response = await loginQuery(
-      agent,
+    const { body: loginResponse } = await client1.login(
       confirmedUser.email,
       confirmedUser.password
     );
-    expect(response.data).not.toBeNull();
-    expect(response.data.login).toBeTruthy();
-    response = await logoutMutationRequest(agent);
-    expect(response.data.logout).toBeTruthy();
-    response = await meQueryRequest(agent);
-    expect(response.data).not.toBeNull();
-    expect(response.data.me.name).toBe("anonymous");
+    expect(loginResponse.data).not.toBeNull();
+    expect(loginResponse.data.login).toBeTruthy();
+    const { body: logoutResponse } = await client1.logout();
+    expect(logoutResponse.data.logout).toBeTruthy();
+    const { body: meResponse } = await client1.me();
+    expect(meResponse.data).not.toBeNull();
+    expect(meResponse.data.me.name).toBe("anonymous");
   });
 
   test("try to logout anonymous user", async () => {
-    let response = await logoutMutationRequest(request);
+    const { body: response } = await client2.logout();
     expect(response.data.logout).toBeTruthy();
+  });
+});
+
+describe("multi session tests", () => {
+  test("logout clears all existing sessions", async () => {
+    await client1.login(user.email, user.password);
+
+    await client2.login(user.email, user.password);
+
+    let { body: response1 } = await client1.me();
+    let { body: response2 } = await client2.me();
+    expect(response1).toEqual(response2);
+    await client1.logout();
+
+    response1 = await client1.me();
+    response2 = await client2.me();
+    expect(response1.body).toEqual(response2.body);
   });
 });
