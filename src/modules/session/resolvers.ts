@@ -3,7 +3,6 @@ import { User } from "../../entity/User";
 import ValidationError from "../../errors/validationError";
 import errorCodes from "../../constants/errors";
 import * as bcrypt from "bcryptjs";
-import SystemError from "../../errors/SystemError";
 import constants from "../../constants";
 
 const resolvers: ResolverMap = {
@@ -11,7 +10,7 @@ const resolvers: ResolverMap = {
     login: async (
       _,
       { email, password }: GQL.ILoginOnMutationArguments,
-      { session }
+      { session, redis, request }
     ) => {
       const user = await User.findOne({
         email
@@ -45,21 +44,30 @@ const resolvers: ResolverMap = {
       }
 
       session.userId = user.id;
+      if (request.sessionID) {
+        await redis.lpush(
+          `${constants.session.USER_SESSION_PREFIX}${user.id}`,
+          request.sessionID
+        );
+      }
+
       return true;
     },
-    logout: (_, __, { session }) =>
-      new Promise(resolve => {
-        session.destroy(err => {
-          if (err) {
-            console.log(err);
-            throw new SystemError({
-              path: "session",
-              code: constants.errors.session.LOGOUT_FAILED
-            });
-          }
-          resolve(true);
-        });
-      })
+    logout: async (_, __, { session, redis }) => {
+      const sessions: string[] = await redis.lrange(
+        `${constants.session.USER_SESSION_PREFIX}${session.userId}`,
+        0,
+        -1
+      );
+      const promises: Promise<Number>[] = [];
+      sessions.forEach(sessionId => {
+        promises.push(
+          redis.del(`${constants.session.REDIS_SESSION_PREFIX}${sessionId}`)
+        );
+      });
+      await Promise.all(promises);
+      return true;
+    }
   },
   Query: {
     me: (_, __, { session }) => {

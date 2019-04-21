@@ -12,7 +12,8 @@ const server = new GraphQLServer({
   context: ({ request }) => ({
     url: `${request.protocol}://${request.hostname}`,
     redis,
-    session: request.session
+    session: request.session,
+    request
   }),
   middlewares: [authMiddleware]
 });
