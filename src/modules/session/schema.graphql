@@ -1,0 +1,10 @@
+# import User from '../../common/schema.graphql'
+
+type Query {
+  me: User!
+}
+
+type Mutation {
+  login(email: String!, password: String!): Boolean!
+  logout: Boolean!
+}

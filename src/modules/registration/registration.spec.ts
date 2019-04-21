@@ -10,13 +10,24 @@ import { GenericError } from "../../errors/genericError";
 const app = server.createHttpServer({ formatError });
 const request = supertest(app);
 
+let connection: Connection;
+
+beforeAll(async () => {
+  connection = await createtypeORMConnection();
+});
+
+afterAll(async () => {
+  if (connection) {
+    await connection.close();
+  }
+});
+
 describe("Register user", () => {
   const email = "test@test.com";
   const password = "password";
   const name = "test";
   const invalidEmail = "dsfdsfsd";
 
-  let connection: Connection;
   const registerMutation = `
   mutation {
     register(email:"${email}",password:"${password}",name:"${name}")
@@ -27,10 +38,6 @@ describe("Register user", () => {
     register(email:"${invalidEmail}",password:"${password}",name:"${name}")
   }
   `;
-
-  beforeAll(async () => {
-    connection = await createtypeORMConnection();
-  });
 
   test("Successful registration", async () => {
     const response = await request
@@ -56,7 +63,7 @@ describe("Register user", () => {
       })
       .expect(200);
     const parsedResponse = JSON.parse(response.text);
-    expect(parsedResponse.data.register).toBeNull();
+    expect(parsedResponse.data).toBeNull();
     expect(parsedResponse.errors).toHaveLength(1);
     expect(parsedResponse.errors[0]).toMatchObject({
       type: GenericError.VALIDATION_ERROR,
@@ -79,7 +86,7 @@ describe("Register user", () => {
       })
       .expect(200);
     const parsedResponse = JSON.parse(response.text);
-    expect(parsedResponse.data.register).toBeNull();
+    expect(parsedResponse.data).toBeNull();
     expect(parsedResponse.errors).toHaveLength(1);
     expect(parsedResponse.errors[0]).toMatchObject({
       type: GenericError.VALIDATION_ERROR,
@@ -92,11 +99,5 @@ describe("Register user", () => {
         ]
       }
     });
-  });
-
-  afterAll(async () => {
-    if (connection) {
-      await connection.close();
-    }
   });
 });

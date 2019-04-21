@@ -24,7 +24,11 @@
   "dependencies": {
     "@sendgrid/mail": "^6.3.1",
     "@types/bcryptjs": "^2.4.2",
+    "@types/connect-redis": "^0.0.9",
+    "@types/express-session": "^1.15.12",
     "bcryptjs": "^2.4.3",
+    "connect-redis": "^3.4.1",
+    "express-session": "^1.16.1",
     "graphql": "^14.2.1",
     "graphql-import": "^0.7.1",
     "graphql-tools": "^4.0.4",

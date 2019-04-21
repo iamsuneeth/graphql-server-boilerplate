@@ -3,7 +3,6 @@ import { User } from "../../entity/User";
 import constants from "../../constants";
 import * as yup from "yup";
 import ValidationError from "../../errors/validationError";
-import * as bcrypt from "bcryptjs";
 import createUserEmailLink from "../../utils/createUserEmailLink";
 import sendMail from "../../utils/sendgrid";
 
@@ -46,7 +45,7 @@ const resolvers: ResolverMap = {
       }
       const user = User.create({
         email,
-        password: await bcrypt.hash(password, 10),
+        password,
         name
       });
       await user.save();
