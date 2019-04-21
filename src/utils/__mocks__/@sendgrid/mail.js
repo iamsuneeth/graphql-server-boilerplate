@@ -1,4 +1,12 @@
 module.exports = {
   setApiKey: () => {},
-  send: () => Promise.resolve("mocked response")
+  send: () =>
+    Promise.resolve([
+      {
+        toJSON: () => ({
+          mock: "mocked response"
+        })
+      },
+      {}
+    ])
 };

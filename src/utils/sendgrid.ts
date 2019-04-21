@@ -1,5 +1,4 @@
 import * as sgMail from "@sendgrid/mail";
-console.log("key: ", process.env.SENDGRID_API_KEY);
 sgMail.setApiKey(<string>process.env.SENDGRID_API_KEY);
 
 const sendMail = async (

@@ -10,6 +10,7 @@ export interface ResolverMap {
       context: {
         redis: Redis;
         url: string;
+        session: Express.Session;
       },
       info: any
     ) => any;
