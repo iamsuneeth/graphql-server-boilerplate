@@ -54,4 +54,27 @@ export class TestClient {
     }
     `);
   }
+
+  get(url: string) {
+    return this.request
+      .get(url)
+      .accept("application/json")
+      .send();
+  }
+
+  forgotPasswordChange(password: string, id: string) {
+    return this.fire(`
+      mutation {
+        forgotPasswordChange(password:"${password}",id:"${id}")
+      }
+    `);
+  }
+
+  sendForgotPasswordLink() {
+    return this.fire(`
+      mutation {
+        sendForgotPasswordEmailLink
+      }
+    `);
+  }
 }

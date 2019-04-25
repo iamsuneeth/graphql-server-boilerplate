@@ -1,10 +1,10 @@
-import { ResolverMap } from "../../types/graphql-utils";
-import { User } from "../../entity/User";
-import constants from "../../constants";
+import { ResolverMap } from "../../../types/graphql-utils";
+import { User } from "../../../entity/User";
+import constants from "../../../constants";
 import * as yup from "yup";
-import ValidationError from "../../errors/validationError";
-import createUserEmailLink from "../../utils/createUserEmailLink";
-import sendMail from "../../utils/sendgrid";
+import ValidationError from "../../../errors/validationError";
+import { createUserEmailLink } from "../../../utils/createEmailLink";
+import sendMail from "../../../utils/sendgrid";
 
 const validations = yup.object().shape({
   email: yup
@@ -49,8 +49,8 @@ const resolvers: ResolverMap = {
         name
       });
       await user.save();
-      sendMail(email, {
-        confirmation_link: await createUserEmailLink(url, user.id, redis),
+      sendMail(email, "Confirm email", "support@tsserver", "CREATE_USER", {
+        link: await createUserEmailLink(url, user.id, redis),
         name
       });
       return true;
