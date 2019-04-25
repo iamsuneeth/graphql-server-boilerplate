@@ -431,6 +431,18 @@
   dependencies:
     "@types/node" "*"
 
+"@types/events@*":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@types/events/-/events-3.0.0.tgz#2862f3f58a9a7f7c3e78d79f130dd4d71c25c2a7"
+  integrity sha512-EaObqwIvayI5a8dCzhFrjKzVwKLxjoG9T6Ppd5CEo07LRKfQ8Yokw54r5+Wq7FaBQ+yXRvQAYPrHwya1/UFt9g==
+
+"@types/express-rate-limit@^3.3.0":
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/@types/express-rate-limit/-/express-rate-limit-3.3.0.tgz#fb87590b37f19629adcec8774c7a75049a4d1c36"
+  integrity sha512-/PmN34aFHxcYwu/BALxFPnLAtUxRjhWFX7baIzaWJ85Mt2l/akj9apACvyQW+qnkxzZanWSy23POX42vHHCsNg==
+  dependencies:
+    "@types/express" "*"
+
 "@types/express-serve-static-core@*":
   version "4.16.2"
   resolved "https://registry.yarnpkg.com/@types/express-serve-static-core/-/express-serve-static-core-4.16.2.tgz#5ee8a22e602005be6767df6b2cba9879df3f75aa"
@@ -456,11 +468,25 @@
     "@types/express-serve-static-core" "*"
     "@types/serve-static" "*"
 
+"@types/faker@^4.1.5":
+  version "4.1.5"
+  resolved "https://registry.yarnpkg.com/@types/faker/-/faker-4.1.5.tgz#8f620f9c9a67150aa0a32b4e8a407da43fca61d4"
+  integrity sha512-YSDqoBEWYGdNk53xSkkb6REaUaVSlIjxIAGjj/nbLzlZOit7kUU+nA2zC2qQkIVO4MQ+3zl4Sz7aw+kbpHHHUQ==
+
 "@types/form-data@*":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@types/form-data/-/form-data-2.2.1.tgz#ee2b3b8eaa11c0938289953606b745b738c54b1e"
   integrity sha512-JAMFhOaHIciYVh8fb5/83nmuO/AHwmto+Hq7a9y8FzLDcC1KCU344XDOMEmahnrTFlHjgh4L0WJFczNIX2GxnQ==
   dependencies:
+    "@types/node" "*"
+
+"@types/glob@^7.1.1":
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/@types/glob/-/glob-7.1.1.tgz#aa59a1c6e3fbc421e07ccd31a944c30eba521575"
+  integrity sha512-1Bh06cbWJUHMC97acuD6UMG29nMt0Aqz1vF3guLfG+kHHJhy3AyohZFFxYk2f7Q1SQIrNwvncxAE0N/9s70F2w==
+  dependencies:
+    "@types/events" "*"
+    "@types/minimatch" "*"
     "@types/node" "*"
 
 "@types/graphql-deduplicator@^2.0.0":
@@ -501,6 +527,11 @@
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@types/mime/-/mime-2.0.1.tgz#dc488842312a7f075149312905b5e3c0b054c79d"
   integrity sha512-FwI9gX75FgVBJ7ywgnq/P7tw+/o1GUbtP0KzbtusLigAOgIgNISRK0ZPl4qertvXSIE8YbsVJueQ90cDt9YYyw==
+
+"@types/minimatch@*":
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
+  integrity sha512-tHq6qdbT9U1IRSGf14CL0pUlULksvY9OZ+5eEgl1N7t+OA3tGvNpxJCzuKQlsNgCVwbAs670L1vcVQi8j9HjnA==
 
 "@types/node@*", "@types/node@^11.13.5":
   version "11.13.5"
@@ -1259,6 +1290,11 @@ cliui@^4.0.0:
     strip-ansi "^4.0.0"
     wrap-ansi "^2.0.0"
 
+clone@^1.0.2:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/clone/-/clone-1.0.4.tgz#da309cc263df15994c688ca902179ca3c7cd7c7e"
+  integrity sha1-2jCcwmPfFZlMaIypAheco8fNfH4=
+
 cluster-key-slot@^1.0.6:
   version "1.0.12"
   resolved "https://registry.yarnpkg.com/cluster-key-slot/-/cluster-key-slot-1.0.12.tgz#d5deff2a520717bc98313979b687309b2d368e29"
@@ -1507,7 +1543,7 @@ deep-is@~0.1.3:
   resolved "https://registry.yarnpkg.com/deep-is/-/deep-is-0.1.3.tgz#b369d6fb5dbc13eecf524f91b070feedc357cf34"
   integrity sha1-s2nW+128E+7PUk+RsHD+7cNXzzQ=
 
-deepmerge@^2.1.1:
+deepmerge@^2.1.1, deepmerge@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/deepmerge/-/deepmerge-2.2.1.tgz#5d3ff22a01c00f645405a2fbc17d0778a1801170"
   integrity sha512-R9hc1Xa/NOBi9WRVUWg19rl1UB7Tt4kuPd+thNJgFZoxXsTz7ncaPaeIm+40oSGuP33DfMb4sZt1QIGiJzC4EA==
@@ -1518,6 +1554,13 @@ default-require-extensions@^2.0.0:
   integrity sha1-9fj7sYp9bVCyH2QfZJ67Uiz+JPc=
   dependencies:
     strip-bom "^3.0.0"
+
+defaults@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/defaults/-/defaults-1.0.3.tgz#c656051e9817d9ff08ed881477f3fe4019f3ef7d"
+  integrity sha1-xlYFHpgX2f8I7YgUd/P+QBnz730=
+  dependencies:
+    clone "^1.0.2"
 
 define-properties@^1.1.2:
   version "1.1.3"
@@ -1821,6 +1864,13 @@ expect@^24.7.1:
     jest-message-util "^24.7.1"
     jest-regex-util "^24.3.0"
 
+express-rate-limit@^3.4.1:
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/express-rate-limit/-/express-rate-limit-3.4.1.tgz#be15f84e257893bb9e6de6d098dd2f84b7e0d0cc"
+  integrity sha512-0Em4GrXBb47EN8C5sk8w5H0X0BH0kgHlVMfYjOaPTmRkABSfIbqpiCMc9LxWT27+X1RkpG6bGnt1Fa/UHwajbQ==
+  dependencies:
+    defaults "^1.0.3"
+
 express-session@^1.16.1:
   version "1.16.1"
   resolved "https://registry.yarnpkg.com/express-session/-/express-session-1.16.1.tgz#251ff9776c59382301de6c8c33411af357ed439c"
@@ -1914,6 +1964,11 @@ extsprintf@^1.2.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/extsprintf/-/extsprintf-1.4.0.tgz#e2689f8f356fad62cca65a3a91c5df5f9551692f"
   integrity sha1-4mifjzVvrWLMplo6kcXfX5VRaS8=
+
+faker@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/faker/-/faker-4.1.0.tgz#1e45bbbecc6774b3c195fad2835109c6d748cc3f"
+  integrity sha1-HkW7vsxndLPBlfrSg1EJxtdIzD8=
 
 fast-deep-equal@^2.0.1:
   version "2.0.1"
@@ -3512,6 +3567,15 @@ merge-descriptors@1.0.1:
   resolved "https://registry.yarnpkg.com/merge-descriptors/-/merge-descriptors-1.0.1.tgz#b00aaa556dd8b44568150ec9d1b953f3f90cbb61"
   integrity sha1-sAqqVW3YtEVoFQ7J0blT8/kMu2E=
 
+merge-graphql-schemas@^1.5.8:
+  version "1.5.8"
+  resolved "https://registry.yarnpkg.com/merge-graphql-schemas/-/merge-graphql-schemas-1.5.8.tgz#89457b60312aabead44d5b2b7625643f8ab9e369"
+  integrity sha512-0TGOKebltvmWR9h9dPYS2vAqMPThXwJ6gVz7O5MtpBp2sunAg/M25iMSNI7YhU6PDJVtGtldTfqV9a+55YhB+A==
+  dependencies:
+    deepmerge "^2.2.1"
+    glob "^7.1.3"
+    is-glob "^4.0.0"
+
 merge-stream@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/merge-stream/-/merge-stream-1.0.1.tgz#4041202d508a342ba00174008df0c251b8c135e1"
@@ -4319,6 +4383,14 @@ range-parser@~1.2.0:
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.2.0.tgz#f49be6b487894ddc40dcc94a322f611092e00d5e"
   integrity sha1-9JvmtIeJTdxA3MlKMi9hEJLgDV4=
 
+rate-limit-redis@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/rate-limit-redis/-/rate-limit-redis-1.6.0.tgz#fbd144ae9a66bef09ebc780752f3924f0ee2dcfe"
+  integrity sha512-qWWbYqlddH1TFMH0iDKGkIVtvSh6F1dJUfqM5gpxjcnPO8M8sxlSFUrqtcgaF3mhtKHkU3As2DNWp1PjZMU7ug==
+  dependencies:
+    defaults "^1.0.3"
+    redis "^2.6.0-2"
+
 raw-body@2.3.3:
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/raw-body/-/raw-body-2.3.3.tgz#1b324ece6b5706e153855bc1148c65bb7f6ea0c3"
@@ -4422,7 +4494,7 @@ redis-parser@^3.0.0:
   dependencies:
     redis-errors "^1.0.0"
 
-redis@^2.8.0:
+redis@^2.6.0-2, redis@^2.8.0:
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/redis/-/redis-2.8.0.tgz#202288e3f58c49f6079d97af7a10e1303ae14b02"
   integrity sha512-M1OkonEQwtRmZv4tEWF2VgpG0JWJ8Fv1PhlgT5+B+uNq2cA3Rt1Yt/ryoR+vQNOQcIEgdCdfH0jr3bDpihAw1A==

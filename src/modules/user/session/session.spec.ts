@@ -1,31 +1,40 @@
-import createtypeORMConnection from "../../utils/typeORMConnection";
-import { User } from "../../entity/User";
+import createtypeORMConnection from "../../../utils/typeORMConnection";
+import { User } from "../../../entity/User";
 import { Connection } from "typeorm";
-import { GenericError } from "../../errors/genericError";
-import constants from "../../constants";
-import { TestClient } from "../../utils/TestClient";
-
+import { GenericError } from "../../../errors/genericError";
+import constants from "../../../constants";
+import { TestClient } from "../../../utils/TestClient";
+import * as faker from "faker";
 let client1: TestClient;
 let client2: TestClient;
 let connection: Connection;
 
 const user = {
-  email: "testuser@test.com",
-  name: "test",
-  password: "password1"
+  email: faker.internet.email(),
+  name: faker.name.findName(),
+  password: faker.internet.password()
 };
 
 const confirmedUser = {
-  email: "testuser2@test.com",
-  name: "test2",
-  password: "password5",
+  email: faker.internet.email(),
+  name: faker.name.findName(),
+  password: faker.internet.password(),
   confirmed: true
+};
+
+const lockedUser = {
+  email: faker.internet.email(),
+  name: faker.name.findName(),
+  password: faker.internet.password(),
+  confirmed: true,
+  locked: true
 };
 
 beforeAll(async () => {
   connection = await createtypeORMConnection();
   await User.create(user).save();
   await User.create(confirmedUser).save();
+  await User.create(lockedUser).save();
   client1 = new TestClient();
   client2 = new TestClient();
 });
@@ -39,7 +48,7 @@ afterAll(async () => {
 describe("login tests", () => {
   test("Invalid login due to wrong email id", async () => {
     const { body: response } = await client1.login(
-      "test2@dfd.com",
+      faker.internet.email(),
       user.password
     );
     expect(response.data).toBeNull();
@@ -67,6 +76,26 @@ describe("login tests", () => {
         email: [
           {
             code: constants.errors.validation.EMAIL_VERIFICATION_PENDING,
+            path: "email"
+          }
+        ]
+      }
+    });
+  });
+
+  test("Invalid login due to locked status", async () => {
+    const { body: response } = await client1.login(
+      lockedUser.email,
+      lockedUser.password
+    );
+    expect(response.data).toBeNull();
+    expect(response.errors).toHaveLength(1);
+    expect(response.errors[0]).toMatchObject({
+      type: GenericError.VALIDATION_ERROR,
+      state: {
+        email: [
+          {
+            code: constants.errors.validation.USER_LOCKED,
             path: "email"
           }
         ]

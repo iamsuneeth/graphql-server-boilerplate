@@ -1,18 +1,19 @@
 import { Connection } from "typeorm";
-import createtypeORMConnection from "../../utils/typeORMConnection";
-import { User } from "../../entity/User";
-import constants from "../../constants";
-import { GenericError } from "../../errors/genericError";
-import { TestClient } from "../../utils/TestClient";
+import createtypeORMConnection from "../../../utils/typeORMConnection";
+import { User } from "../../../entity/User";
+import constants from "../../../constants";
+import { GenericError } from "../../../errors/genericError";
+import { TestClient } from "../../../utils/TestClient";
+import * as faker from "faker";
 
 let client1: TestClient;
 
 let connection: Connection;
 
 const user = {
-  email: "example@example.com",
-  name: "name",
-  password: "pasword"
+  email: faker.internet.email(),
+  name: faker.name.findName(),
+  password: faker.internet.password()
 };
 beforeAll(async () => {
   connection = await createtypeORMConnection();
@@ -27,9 +28,9 @@ afterAll(async () => {
 });
 
 describe("Register user", () => {
-  const email = "test@test.com";
-  const password = "password";
-  const name = "test";
+  const email = faker.internet.email();
+  const password = faker.internet.password();
+  const name = faker.name.findName();
   const invalidEmail = "dsfdsfsd";
 
   test("Successful registration", async () => {

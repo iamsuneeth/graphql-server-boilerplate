@@ -1,9 +1,10 @@
-import { ResolverMap } from "../../types/graphql-utils";
-import { User } from "../../entity/User";
-import ValidationError from "../../errors/validationError";
-import errorCodes from "../../constants/errors";
+import { ResolverMap } from "../../../types/graphql-utils";
+import { User } from "../../../entity/User";
+import ValidationError from "../../../errors/validationError";
+import errorCodes from "../../../constants/errors";
 import * as bcrypt from "bcryptjs";
-import constants from "../../constants";
+import constants from "../../../constants";
+import clearUserSessions from "../../../utils/clearUserSessions";
 
 const resolvers: ResolverMap = {
   Mutation: {
@@ -21,6 +22,15 @@ const resolvers: ResolverMap = {
           {
             path: "email",
             code: errorCodes.validation.INVALID_CREDENTIALS
+          }
+        ]);
+      }
+
+      if (user.locked) {
+        throw new ValidationError([
+          {
+            path: "email",
+            code: errorCodes.validation.USER_LOCKED
           }
         ]);
       }
@@ -54,18 +64,7 @@ const resolvers: ResolverMap = {
       return true;
     },
     logout: async (_, __, { session, redis }) => {
-      const sessions: string[] = await redis.lrange(
-        `${constants.session.USER_SESSION_PREFIX}${session.userId}`,
-        0,
-        -1
-      );
-      const promises: Promise<Number>[] = [];
-      sessions.forEach(sessionId => {
-        promises.push(
-          redis.del(`${constants.session.REDIS_SESSION_PREFIX}${sessionId}`)
-        );
-      });
-      await Promise.all(promises);
+      await clearUserSessions(session.userId, redis);
       return true;
     }
   },
