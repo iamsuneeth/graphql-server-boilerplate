@@ -11,6 +11,12 @@ export interface userSession extends Express.Session {
   userId: string;
 }
 
+export interface User {
+  name: string;
+  password: string;
+  email: string;
+}
+
 export interface ResolverMap {
   [key: string]: {
     [key: string]: (

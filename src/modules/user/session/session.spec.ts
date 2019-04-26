@@ -1,11 +1,11 @@
 import { GenericError } from "../../../errors/genericError";
 import constants from "../../../constants";
-import { TestClient } from "../../../utils/TestClient";
+import { TestClient } from "../../../test/utils/TestClient";
 import * as faker from "faker";
-import { prisma } from "../../../../config/prisma/prisma-client";
+import { createUser } from "../../../test/utils/TestHelper";
 let client1: TestClient;
 let client2: TestClient;
-
+faker.seed(Date.now() + 1);
 const user = {
   email: faker.internet.email(),
   name: faker.name.findName(),
@@ -28,9 +28,9 @@ const lockedUser = {
 };
 
 beforeAll(async () => {
-  await prisma.createUser(user);
-  await prisma.createUser(confirmedUser);
-  await prisma.createUser(lockedUser);
+  await createUser(user);
+  await createUser(confirmedUser);
+  await createUser(lockedUser);
   client1 = new TestClient();
   client2 = new TestClient();
 });

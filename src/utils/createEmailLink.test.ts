@@ -3,11 +3,12 @@ import {
   forgotPasswordEmailLink
 } from "./createEmailLink";
 import * as Redis from "ioredis";
-import { TestClient } from "./TestClient";
+import { TestClient } from "../test/utils/TestClient";
 import { GenericError } from "../errors/genericError";
 import constants from "../constants";
 import * as faker from "faker";
 import { prisma, User } from "../../config/prisma/prisma-client";
+import { createUser } from "../test/utils/TestHelper";
 
 describe("create user confirmation email tests", () => {
   let user1: User;
@@ -18,7 +19,7 @@ describe("create user confirmation email tests", () => {
 
   beforeAll(async () => {
     client = new TestClient();
-    user1 = await prisma.createUser({
+    user1 = await createUser({
       email: faker.internet.email(),
       name: faker.name.findName(),
       password: faker.internet.password()

@@ -1,5 +1,5 @@
-import server from "../server";
-import { formatError } from "./errorFormatter";
+import server from "../../server";
+import { formatError } from "../../utils/errorFormatter";
 import supertest = require("supertest");
 const app = server.createHttpServer({ formatError });
 

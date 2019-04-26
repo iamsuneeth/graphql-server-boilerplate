@@ -4,7 +4,7 @@ import constants from "../../../constants";
 import { forgotPasswordEmailLink } from "../../../utils/createEmailLink";
 import sendMail from "../../../utils/sendgrid";
 import clearUserSessions from "../../../utils/clearUserSessions";
-import * as bcrypt from "bcryptjs";
+import { hash } from "bcryptjs";
 
 const resolvers: ResolverMap = {
   Mutation: {
@@ -27,7 +27,7 @@ const resolvers: ResolverMap = {
           id: userId
         },
         data: {
-          password: await bcrypt.hash(password, 10),
+          password: await hash(password, 10),
           locked: false
         }
       });

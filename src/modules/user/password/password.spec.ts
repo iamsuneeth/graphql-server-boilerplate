@@ -1,9 +1,10 @@
-import { TestClient } from "../../../utils/TestClient";
+import { TestClient } from "../../../test/utils/TestClient";
 import * as faker from "faker";
 import { prisma } from "../../../../config/prisma/prisma-client";
+import { createUser } from "../../../test/utils/TestHelper";
 
 let client: TestClient;
-
+faker.seed(Date.now() + 3);
 const user = {
   email: faker.internet.email(),
   name: faker.name.findName(),
@@ -13,7 +14,7 @@ const user = {
 
 beforeAll(async () => {
   client = new TestClient();
-  await prisma.createUser(user);
+  await createUser(user);
 });
 
 describe("Forgot password tests", () => {

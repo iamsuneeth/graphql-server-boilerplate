@@ -1,11 +1,11 @@
 import constants from "../../../constants";
 import { GenericError } from "../../../errors/genericError";
-import { TestClient } from "../../../utils/TestClient";
 import * as faker from "faker";
 import { prisma } from "../../../../config/prisma/prisma-client";
-
+import { TestClient } from "../../../test/utils/TestClient";
+import { createUser } from "../../../test/utils/TestHelper";
 let client1: TestClient;
-
+faker.seed(Date.now() + 2);
 const user = {
   email: faker.internet.email(),
   name: faker.name.findName(),
@@ -13,7 +13,7 @@ const user = {
 };
 beforeAll(async () => {
   client1 = new TestClient();
-  await prisma.createUser(user);
+  await createUser(user);
 });
 
 describe("Register user", () => {

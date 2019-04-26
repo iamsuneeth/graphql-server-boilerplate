@@ -4,6 +4,7 @@ import * as yup from "yup";
 import ValidationError from "../../../errors/validationError";
 import { createUserEmailLink } from "../../../utils/createEmailLink";
 import sendMail from "../../../utils/sendgrid";
+import { hash } from "bcryptjs";
 
 const validations = yup.object().shape({
   email: yup
@@ -41,7 +42,7 @@ const resolvers: ResolverMap = {
       }
       const user = await prisma.createUser({
         email,
-        password,
+        password: await hash(password, 10),
         name
       });
       sendMail(email, "Confirm email", "support@tsserver", "CREATE_USER", {

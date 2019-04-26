@@ -3,5 +3,6 @@ module.exports = {
   testEnvironment: "node",
   globals: {
     request: true
-  }
+  },
+  setupFiles: ["<rootDir>/src/test/jest/init.ts"]
 };
