@@ -8,6 +8,7 @@ import * as connectRedis from "connect-redis";
 import authMiddleware from "./middleware/auth";
 import * as rateLimit from "express-rate-limit";
 import * as rateLimitRedisStore from "rate-limit-redis";
+import { prisma } from "../config/prisma/prisma-client";
 
 const server = new GraphQLServer({
   schema: fetchScehma(),
@@ -15,7 +16,8 @@ const server = new GraphQLServer({
     url: `${request.protocol}://${request.hostname}`,
     redis,
     session: request.session,
-    request
+    request,
+    prisma
   }),
   middlewares: [authMiddleware]
 });

@@ -1,13 +1,10 @@
-import createtypeORMConnection from "../../../utils/typeORMConnection";
-import { User } from "../../../entity/User";
-import { Connection } from "typeorm";
 import { GenericError } from "../../../errors/genericError";
 import constants from "../../../constants";
 import { TestClient } from "../../../utils/TestClient";
 import * as faker from "faker";
+import { prisma } from "../../../../config/prisma/prisma-client";
 let client1: TestClient;
 let client2: TestClient;
-let connection: Connection;
 
 const user = {
   email: faker.internet.email(),
@@ -31,18 +28,11 @@ const lockedUser = {
 };
 
 beforeAll(async () => {
-  connection = await createtypeORMConnection();
-  await User.create(user).save();
-  await User.create(confirmedUser).save();
-  await User.create(lockedUser).save();
+  await prisma.createUser(user);
+  await prisma.createUser(confirmedUser);
+  await prisma.createUser(lockedUser);
   client1 = new TestClient();
   client2 = new TestClient();
-});
-
-afterAll(async () => {
-  if (connection) {
-    await connection.close();
-  }
 });
 
 describe("login tests", () => {

@@ -1,14 +1,10 @@
-import { Connection } from "typeorm";
-import createtypeORMConnection from "../../../utils/typeORMConnection";
-import { User } from "../../../entity/User";
 import constants from "../../../constants";
 import { GenericError } from "../../../errors/genericError";
 import { TestClient } from "../../../utils/TestClient";
 import * as faker from "faker";
+import { prisma } from "../../../../config/prisma/prisma-client";
 
 let client1: TestClient;
-
-let connection: Connection;
 
 const user = {
   email: faker.internet.email(),
@@ -16,15 +12,8 @@ const user = {
   password: faker.internet.password()
 };
 beforeAll(async () => {
-  connection = await createtypeORMConnection();
   client1 = new TestClient();
-  await User.create(user).save();
-});
-
-afterAll(async () => {
-  if (connection) {
-    await connection.close();
-  }
+  await prisma.createUser(user);
 });
 
 describe("Register user", () => {
@@ -36,7 +25,7 @@ describe("Register user", () => {
   test("Successful registration", async () => {
     const { body: response } = await client1.register(email, password, name);
     expect(response.data.register).toBeTruthy();
-    const user = await User.findOne({
+    const user = await prisma.user({
       email
     });
     expect(user).toBeDefined();

@@ -1,10 +1,10 @@
 import { ResolverMap } from "../../../types/graphql-utils";
-import { User } from "../../../entity/User";
 import ValidationError from "../../../errors/validationError";
 import errorCodes from "../../../constants/errors";
 import * as bcrypt from "bcryptjs";
 import constants from "../../../constants";
 import clearUserSessions from "../../../utils/clearUserSessions";
+import { prisma } from "../../../../config/prisma/prisma-client";
 
 const resolvers: ResolverMap = {
   Mutation: {
@@ -13,7 +13,7 @@ const resolvers: ResolverMap = {
       { email, password }: GQL.ILoginOnMutationArguments,
       { session, redis, request }
     ) => {
-      const user = await User.findOne({
+      const user = await prisma.user({
         email
       });
 
@@ -77,7 +77,7 @@ const resolvers: ResolverMap = {
           name: "anonymous"
         };
       }
-      return User.findOne({
+      return prisma.user({
         id: session.userId
       });
     }

@@ -1,5 +1,4 @@
 import { ResolverMap } from "../../../types/graphql-utils";
-import { User } from "../../../entity/User";
 import constants from "../../../constants";
 import * as yup from "yup";
 import ValidationError from "../../../errors/validationError";
@@ -19,7 +18,7 @@ const resolvers: ResolverMap = {
     register: async (
       _,
       args: GQL.IRegisterOnMutationArguments,
-      { redis, url }
+      { redis, url, prisma }
     ) => {
       try {
         await validations.validate(args, { abortEarly: false });
@@ -32,23 +31,19 @@ const resolvers: ResolverMap = {
         );
       }
       const { email, password, name } = args;
-      const userExists = await User.findOne({
-        where: {
-          email
-        },
-        select: ["id"]
+      const userExists = await prisma.user({
+        email
       });
       if (userExists) {
         throw new ValidationError([
           { path: "email", code: constants.errors.validation.EMAIL_IN_USE }
         ]);
       }
-      const user = User.create({
+      const user = await prisma.createUser({
         email,
         password,
         name
       });
-      await user.save();
       sendMail(email, "Confirm email", "support@tsserver", "CREATE_USER", {
         link: await createUserEmailLink(url, user.id, redis),
         name

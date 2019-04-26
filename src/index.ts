@@ -1,6 +1,5 @@
 import "reflect-metadata";
 import server from "./server";
-import createtypeORMConnection from "./utils/typeORMConnection";
 import { formatError } from "./utils/errorFormatter";
 
 const cors = {
@@ -9,7 +8,6 @@ const cors = {
 };
 
 const startServer = async () => {
-  await createtypeORMConnection();
   await server.start(
     {
       formatError,

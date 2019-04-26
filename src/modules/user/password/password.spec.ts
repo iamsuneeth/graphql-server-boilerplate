@@ -1,12 +1,8 @@
-import { Connection } from "typeorm";
-import createtypeORMConnection from "../../../utils/typeORMConnection";
-import { User } from "../../../entity/User";
 import { TestClient } from "../../../utils/TestClient";
 import * as faker from "faker";
+import { prisma } from "../../../../config/prisma/prisma-client";
 
 let client: TestClient;
-
-let connection: Connection;
 
 const user = {
   email: faker.internet.email(),
@@ -16,15 +12,8 @@ const user = {
 };
 
 beforeAll(async () => {
-  connection = await createtypeORMConnection();
   client = new TestClient();
-  await User.create(user).save();
-});
-
-afterAll(async () => {
-  if (connection) {
-    await connection.close();
-  }
+  await prisma.createUser(user);
 });
 
 describe("Forgot password tests", () => {
@@ -36,7 +25,7 @@ describe("Forgot password tests", () => {
     expect(response.body.data).not.toBeNull();
     expect(response.body.data.me.name).toBe("anonymous");
     response = await client.login(user.email, user.password);
-    const dbUser = await User.findOne({
+    const dbUser = await prisma.user({
       email: user.email
     });
     if (dbUser) {

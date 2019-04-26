@@ -2,38 +2,33 @@ import {
   createUserEmailLink,
   forgotPasswordEmailLink
 } from "./createEmailLink";
-import { User } from "../entity/User";
 import * as Redis from "ioredis";
-import createtypeORMConnection from "./typeORMConnection";
-import { Connection } from "typeorm";
 import { TestClient } from "./TestClient";
 import { GenericError } from "../errors/genericError";
 import constants from "../constants";
 import * as faker from "faker";
+import { prisma, User } from "../../config/prisma/prisma-client";
 
 describe("create user confirmation email tests", () => {
   let user1: User;
   let user2: User;
-  let connection: Connection;
   let client: TestClient;
 
   const newPassword = "newPassword";
 
   beforeAll(async () => {
-    connection = await createtypeORMConnection();
     client = new TestClient();
-    user1 = await User.create({
+    user1 = await prisma.createUser({
       email: faker.internet.email(),
       name: faker.name.findName(),
       password: faker.internet.password()
-    }).save();
-    user2 = await User.create({
+    });
+    user2 = await prisma.createUser({
       email: faker.internet.email(),
       name: faker.name.findName(),
       password: faker.internet.password(),
       confirmed: true
     });
-    await user2.save();
   });
 
   test("successful confirmation link generation and user confirmation", async () => {
@@ -44,7 +39,7 @@ describe("create user confirmation email tests", () => {
     expect(await redis.get(id)).toBe(user1.id);
     const response = await client.get(link).expect(200);
     expect(response.text).toEqual("ok");
-    const user = await User.findOne({
+    const user = await prisma.user({
       id: user1.id
     });
     expect((user as User).confirmed).toBeTruthy();
@@ -79,11 +74,5 @@ describe("create user confirmation email tests", () => {
         ]
       }
     });
-  });
-
-  afterAll(async () => {
-    if (connection) {
-      await connection.close();
-    }
   });
 });

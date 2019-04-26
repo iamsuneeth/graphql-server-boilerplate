@@ -1,15 +1,29 @@
-version: "3.1"
+version: "3"
 
 services:
-  db:
-    image: postgres
-    container_name: "postgres"
+  prisma:
+    image: prismagraphql/prisma:1.31
+    restart: always
+    ports:
+      - "4466:4466"
+    environment:
+      PRISMA_CONFIG: |
+        port: 4466
+        databases:
+          default:
+            connector: postgres
+            host: postgres
+            port: 5432
+            user: prisma
+            password: prisma
+  postgres:
+    image: postgres:10.3
     restart: always
     ports:
       - 5432:5432
     environment:
-      POSTGRES_PASSWORD: postgres
-
+      POSTGRES_PASSWORD: prisma
+      POSTGRES_USER: prisma
   redis:
     image: redis
     ports:

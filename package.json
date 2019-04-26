@@ -41,9 +41,10 @@
     "ioredis": "^4.9.0",
     "merge-graphql-schemas": "^1.5.8",
     "pg": "^7.10.0",
+    "prisma": "^1.31.1",
+    "prisma-client-lib": "^1.30.2",
     "rate-limit-redis": "^1.6.0",
     "reflect-metadata": "^0.1.13",
-    "typeorm": "^0.2.16",
     "uuid": "^3.3.2",
     "yup": "^0.27.0"
   },

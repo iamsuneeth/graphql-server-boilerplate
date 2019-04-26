@@ -1,6 +1,7 @@
 import { GraphQLFormattedError } from "graphql";
 import { PrismaErrorProps } from "graphql-yoga/dist/defaultErrorFormatter";
 import { Redis } from "ioredis";
+import { Prisma } from "../../config/prisma/prisma-client/index";
 
 export interface userSession extends Express.Session {
   userId: string;
@@ -16,6 +17,7 @@ export interface ResolverMap {
         url: string;
         session: userSession;
         request: Express.Request;
+        prisma: Prisma;
       },
       info: any
     ) => any;

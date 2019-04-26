@@ -1,7 +1,6 @@
 import { ResolverMap } from "../../../types/graphql-utils";
 import ValidationError from "../../../errors/validationError";
 import constants from "../../../constants";
-import { User } from "../../../entity/User";
 import { forgotPasswordEmailLink } from "../../../utils/createEmailLink";
 import sendMail from "../../../utils/sendgrid";
 import clearUserSessions from "../../../utils/clearUserSessions";
@@ -12,7 +11,7 @@ const resolvers: ResolverMap = {
     forgotPasswordChange: async (
       _,
       { password, id }: GQL.IForgotPasswordChangeOnMutationArguments,
-      { redis }
+      { redis, prisma }
     ) => {
       const userId = await redis.get(id);
       if (!userId) {
@@ -23,20 +22,20 @@ const resolvers: ResolverMap = {
           }
         ]);
       }
-      await User.update(
-        {
+      await prisma.updateUser({
+        where: {
           id: userId
         },
-        {
+        data: {
           password: await bcrypt.hash(password, 10),
           locked: false
         }
-      );
+      });
       await redis.del(id);
       return true;
     },
-    sendForgotPasswordEmailLink: async (_, __, { session, redis }) => {
-      const user: User = <User>await User.findOne({
+    sendForgotPasswordEmailLink: async (_, __, { session, redis, prisma }) => {
+      const user = await prisma.user({
         id: session.userId
       });
 
@@ -57,14 +56,14 @@ const resolvers: ResolverMap = {
 
       await clearUserSessions(session.userId, redis);
 
-      await User.update(
-        {
+      await prisma.updateUser({
+        where: {
           id: session.userId
         },
-        {
+        data: {
           locked: true
         }
-      );
+      });
 
       return true;
     }
