@@ -51,10 +51,10 @@
   },
   "scripts": {
     "start": "NODE_ENV=development nodemon --exec ts-node --files src/index.ts",
-    "predev": "prisma deploy -p config/prisma/prisma.development.yml",
+    "predev": "prisma deploy --no-generate -p config/prisma/prisma.development.yml",
     "dev": "NODE_ENV=development nodemon --exec ts-node --files src/index.ts",
     "generate-schema-types": "ts-node --files src/scripts/generateTypes.ts",
-    "pretest": "prisma deploy -p config/prisma/prisma.test.yml",
+    "pretest": "prisma deploy --no-generate -p config/prisma/prisma.test.yml",
     "test": "jest --watch",
     "posttest": "prisma reset -f -p config/prisma/prisma.test.yml"
   }
